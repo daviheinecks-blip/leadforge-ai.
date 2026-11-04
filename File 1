@@ -1,0 +1,628 @@
+app/page.js
+"use client";
+
+import { useState } from "react";
+
+export default function Home() {
+  const [company, setCompany] = useState({
+    name: "",
+    segment: "",
+    city: "",
+    whatsapp: "",
+    description: "",
+    services: "",
+  });
+
+  const [template, setTemplate] = useState("modern");
+  const [generated, setGenerated] = useState(false);
+  const [editing, setEditing] = useState(false);
+
+  const [site, setSite] = useState({
+    title: "",
+    description: "",
+    color: "#8257e5",
+  });
+
+  function update(field, value) {
+    setCompany({ ...company, [field]: value });
+  }
+
+  function generateSite() {
+    if (!company.name.trim() || !company.segment.trim()) {
+      alert("Preencha o nome e o segmento da empresa.");
+      return;
+    }
+
+    setSite({
+      title: company.name,
+      description: company.description,
+      color: template === "elegant"
+        ? "#b58a52"
+        : template === "minimal"
+        ? "#16a085"
+        : "#8257e5",
+    });
+
+    setGenerated(true);
+    setEditing(false);
+  }
+
+  function editSite(field, value) {
+    setSite({ ...site, [field]: value });
+  }
+
+  return (
+    <main>
+      <header className="topbar">
+        <div className="logo">
+          <span className="logo-icon">✦</span>
+          LEADFORGE <b>AI</b>
+        </div>
+        <span className="status">● SISTEMA ONLINE</span>
+      </header>
+
+      <section className="hero">
+        <span className="tag">WEBSITE BUILDER • V1</span>
+        <h1>Crie sites profissionais com poucos cliques.</h1>
+        <p>
+          Cadastre uma empresa, escolha um modelo e
+          gere seu site para personalizar.
+        </p>
+      </section>
+
+      <section className="stats">
+        <div className="stat">
+          <span>Projetos nesta sessão</span>
+          <strong>{generated ? "1" : "0"}</strong>
+        </div>
+        <div className="stat">
+          <span>Templates disponíveis</span>
+          <strong>03</strong>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="section-heading">
+          <span className="number">01</span>
+          <div>
+            <h2>Dados da empresa</h2>
+            <p>Utilize somente informações confirmadas.</p>
+          </div>
+        </div>
+
+        <div className="form-grid">
+          <label>
+            Nome da empresa *
+            <input
+              placeholder="Ex: Restaurante Sabor"
+              value={company.name}
+              onChange={e => update("name", e.target.value)}
+            />
+          </label>
+
+          <label>
+            Segmento *
+            <input
+              placeholder="Ex: Restaurante"
+              value={company.segment}
+              onChange={e => update("segment", e.target.value)}
+            />
+          </label>
+
+          <label>
+            Cidade
+            <input
+              placeholder="Ex: São Paulo"
+              value={company.city}
+              onChange={e => update("city", e.target.value)}
+            />
+          </label>
+
+          <label>
+            WhatsApp confirmado
+            <input
+              placeholder="Ex: 5511999999999"
+              value={company.whatsapp}
+              onChange={e => update("whatsapp", e.target.value)}
+            />
+          </label>
+
+          <label className="full">
+            Sobre a empresa
+            <textarea
+              placeholder="Descreva a empresa usando informações confirmadas..."
+              value={company.description}
+              onChange={e => update("description", e.target.value)}
+            />
+          </label>
+
+          <label className="full">
+            Produtos ou serviços confirmados
+            <textarea
+              placeholder="Informe produtos ou serviços reais..."
+              value={company.services}
+              onChange={e => update("services", e.target.value)}
+            />
+          </label>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="section-heading">
+          <span className="number">02</span>
+          <div>
+            <h2>Escolha seu template</h2>
+            <p>Selecione a identidade visual do projeto.</p>
+          </div>
+        </div>
+
+        <div className="templates">
+          {[
+            {
+              id: "modern",
+              name: "Modern",
+              color: "#8257e5",
+              description: "Moderno e tecnológico",
+            },
+            {
+              id: "elegant",
+              name: "Elegant",
+              color: "#b58a52",
+              description: "Sofisticado e premium",
+            },
+            {
+              id: "minimal",
+              name: "Minimal",
+              color: "#16a085",
+              description: "Limpo e minimalista",
+            },
+          ].map(item => (
+            <button
+              key={item.id}
+              className={`template ${template === item.id ? "selected" : ""}`}
+              onClick={() => setTemplate(item.id)}
+            >
+              <div
+                className="template-color"
+                style={{ background: item.color }}
+              />
+              <strong>{item.name}</strong>
+              <small>{item.description}</small>
+              {template === item.id && <span>✓ Selecionado</span>}
+            </button>
+          ))}
+        </div>
+
+        <button className="generate" onClick={generateSite}>
+          ✦ GERAR MEU SITE
+        </button>
+      </section>
+
+      {generated && (
+        <section className="panel">
+          <div className="section-heading">
+            <span className="number">03</span>
+            <div>
+              <h2>Seu site foi gerado!</h2>
+              <p>Confira e personalize sua página.</p>
+            </div>
+          </div>
+
+          <div
+            className="website"
+            style={{ "--accent": site.color }}
+          >
+            <div className="website-nav">
+              <strong>{site.title}</strong>
+              <span>{company.segment}</span>
+            </div>
+
+            <div className="website-hero">
+              <small>{company.segment}</small>
+              <h2>{site.title}</h2>
+              {company.city && <p>{company.city}</p>}
+              {site.description && <p>{site.description}</p>}
+              {company.whatsapp && (
+                <a
+                  href={`https://wa.me/${company.whatsapp.replace(/\D/g, "")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Fale conosco
+                </a>
+              )}
+            </div>
+
+            {company.services && (
+              <div className="website-services">
+                <h3>Nossos produtos e serviços</h3>
+                <p>{company.services}</p>
+              </div>
+            )}
+          </div>
+
+          <button
+            className="edit-button"
+            onClick={() => setEditing(!editing)}
+          >
+            ✎ {editing ? "Fechar editor" : "Editar meu site"}
+          </button>
+
+          {editing && (
+            <div className="editor">
+              <h3>Personalização</h3>
+
+              <label>
+                Título do site
+                <input
+                  value={site.title}
+                  onChange={e => editSite("title", e.target.value)}
+                />
+              </label>
+
+              <label>
+                Descrição
+                <textarea
+                  value={site.description}
+                  onChange={e => editSite("description", e.target.value)}
+                />
+              </label>
+
+              <label>
+                Cor principal
+                <input
+                  type="color"
+                  value={site.color}
+                  onChange={e => editSite("color", e.target.value)}
+                />
+              </label>
+            </div>
+          )}
+
+          <button
+            className="generate"
+            onClick={() => window.print()}
+          >
+            ↓ SALVAR / IMPRIMIR PRÉ-VISUALIZAÇÃO
+          </button>
+        </section>
+      )}
+
+      <footer>
+        LEADFORGE AI © 2026
+        <p>Intelligent Website Builder</p>
+      </footer>
+
+      <style jsx global>{`
+        * {
+          box-sizing: border-box;
+        }
+
+        body {
+          margin: 0;
+          background: #0b0912;
+          color: #f8f7ff;
+          font-family: Arial, sans-serif;
+        }
+
+        button, input, textarea {
+          font: inherit;
+        }
+
+        .topbar {
+          padding: 20px 6%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid #292336;
+          gap: 10px;
+        }
+
+        .logo {
+          font-weight: 900;
+          letter-spacing: 1px;
+        }
+
+        .logo b {
+          color: #a98aff;
+        }
+
+        .logo-icon {
+          color: #a98aff;
+          margin-right: 7px;
+          font-size: 22px;
+        }
+
+        .status {
+          font-size: 10px;
+          color: #65dfaa;
+        }
+
+        .hero {
+          padding: 55px 6% 25px;
+          max-width: 900px;
+        }
+
+        .tag {
+          color: #b69aff;
+          font-size: 11px;
+          letter-spacing: 2px;
+        }
+
+        .hero h1 {
+          font-size: clamp(30px, 6vw, 48px);
+          max-width: 700px;
+          line-height: 1.1;
+          margin: 15px 0;
+        }
+
+        .hero p, .section-heading p {
+          color: #aaa3b8;
+          line-height: 1.6;
+        }
+
+        .stats {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 15px;
+          margin: 0 6% 25px;
+        }
+
+        .stat, .panel {
+          background: #15111f;
+          border: 1px solid #30273f;
+          border-radius: 14px;
+          padding: 20px;
+        }
+
+        .stat span {
+          display: block;
+          color: #aaa3b8;
+          font-size: 12px;
+        }
+
+        .stat strong {
+          display: block;
+          font-size: 28px;
+          margin-top: 9px;
+        }
+
+        .panel {
+          margin: 0 6% 22px;
+        }
+
+        .section-heading {
+          display: flex;
+          gap: 14px;
+          margin-bottom: 25px;
+          align-items: flex-start;
+        }
+
+        .number {
+          background: #302247;
+          color: #c5a8ff;
+          padding: 10px;
+          border-radius: 9px;
+          font-weight: bold;
+        }
+
+        h2, h3, p {
+          margin-top: 0;
+        }
+
+        .section-heading h2 {
+          margin-bottom: 5px;
+        }
+
+        .section-heading p {
+          font-size: 12px;
+          margin: 0;
+        }
+
+        .form-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 17px;
+        }
+
+        label {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          font-size: 12px;
+          color: #d9d2e5;
+        }
+
+        input, textarea {
+          width: 100%;
+          padding: 13px;
+          background: #0e0b16;
+          border: 1px solid #383044;
+          border-radius: 8px;
+          color: white;
+          outline: none;
+        }
+
+        input:focus, textarea:focus {
+          border-color: #9870ed;
+        }
+
+        textarea {
+          min-height: 95px;
+          resize: vertical;
+        }
+
+        .full {
+          grid-column: 1 / -1;
+        }
+
+        .templates {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
+        }
+
+        .template {
+          text-align: left;
+          padding: 12px;
+          background: #0e0b16;
+          color: white;
+          border: 1px solid #383044;
+          border-radius: 10px;
+          cursor: pointer;
+        }
+
+        .template.selected {
+          border: 2px solid #a98aff;
+        }
+
+        .template-color {
+          height: 55px;
+          border-radius: 6px;
+          margin-bottom: 12px;
+        }
+
+        .template strong, .template small, .template span {
+          display: block;
+          margin-top: 5px;
+        }
+
+        .template small {
+          color: #aaa3b8;
+          font-size: 10px;
+        }
+
+        .template span {
+          color: #b99aff;
+          font-size: 10px;
+        }
+
+        .generate, .edit-button {
+          width: 100%;
+          margin-top: 22px;
+          padding: 16px;
+          border: 0;
+          border-radius: 9px;
+          font-weight: bold;
+          cursor: pointer;
+        }
+
+        .generate {
+          background: linear-gradient(100deg, #7545d5, #a56cf3);
+          color: white;
+        }
+
+        .edit-button {
+          background: #29213a;
+          color: white;
+          border: 1px solid #514064;
+        }
+
+        .website {
+          background: white;
+          color: #222;
+          border-radius: 12px;
+          overflow: hidden;
+          font-family: Arial, sans-serif;
+        }
+
+        .website-nav {
+          padding: 18px;
+          display: flex;
+          justify-content: space-between;
+          gap: 10px;
+          border-bottom: 1px solid #eee;
+        }
+
+        .website-nav span {
+          font-size: 12px;
+        }
+
+        .website-hero {
+          padding: 45px 20px;
+          text-align: center;
+          background: #f5f3f9;
+        }
+
+        .website-hero h2 {
+          color: var(--accent);
+          font-size: 32px;
+          overflow-wrap: anywhere;
+        }
+
+        .website-hero p {
+          line-height: 1.6;
+        }
+
+        .website-hero a {
+          display: inline-block;
+          background: var(--accent);
+          color: white;
+          padding: 12px 20px;
+          border-radius: 6px;
+          text-decoration: none;
+          margin-top: 12px;
+        }
+
+        .website-services {
+          padding: 25px;
+        }
+
+        .editor {
+          margin-top: 22px;
+          display: grid;
+          gap: 16px;
+        }
+
+        footer {
+          padding: 35px;
+          text-align: center;
+          color: #aaa3b8;
+          font-size: 12px;
+        }
+
+        @media(max-width: 600px) {
+          .form-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .full {
+            grid-column: auto;
+          }
+
+          .templates {
+            grid-template-columns: 1fr;
+          }
+
+          .stats {
+            gap: 8px;
+          }
+
+          .panel {
+            padding: 16px;
+          }
+        }
+
+        @media print {
+          body {
+            background: white;
+          }
+
+          .topbar, .hero, .stats, footer,
+          .panel:not(:has(.website)),
+          .section-heading, .edit-button,
+          .generate, .editor {
+            display: none !important;
+          }
+
+          .panel {
+            display: block;
+            margin: 0;
+            padding: 0;
+            border: 0;
+          }
+        }
+      `}</style>
+    </main>
+  );
+}
